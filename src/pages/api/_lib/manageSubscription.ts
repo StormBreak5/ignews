@@ -9,7 +9,7 @@ export async function saveSubscription(
 ) {
     const userRef = await fauna.query(
         q.Select(
-            'ref',
+            "ref",
             q.Get(
                 q.Match(
                     q.Index('user_by_stripe_customer_id'),
@@ -25,7 +25,7 @@ export async function saveSubscription(
         id: subscription.id,
         userId: userRef,
         status: subscription.status,
-        priceId: subscription.items.data[0].price.id,
+        price_id: subscription.items.data[0].price.id,
     }
 
     if (createAction) {
@@ -43,7 +43,7 @@ export async function saveSubscription(
                     q.Get(
                         q.Match(
                             q.Index('subscription_by_id'),
-                            subscription.id
+                            subscriptionId
                         )
                     )
                 ),

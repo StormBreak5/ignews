@@ -1,14 +1,14 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Readable } from 'stream'
 import Stripe from "stripe";
-import { stripe } from "../../../services/stripe";
-import { saveSubscription } from "../_lib/manageSubscription";
+import { stripe } from "../../services/stripe";
+import { saveSubscription } from "./_lib/manageSubscription";
 
 async function buffer(readable: Readable) {
     const chunks = [];
 
     for await (const chunk of readable) {
-        chunk.push(
+        chunks.push(
             typeof chunk === "string" ? Buffer.from(chunk) : chunk
         )
     }
@@ -37,7 +37,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         try {
             event = stripe.webhooks.constructEvent(buf, secret, process.env.STRIPE_WEBHOOK_SECRET)
         } catch (err) {
-            return res.status(400).send(`Webhook error: ${err.message}`)
+            return res.status(400).send(`Webhook error: ${err.message}`);
+            console.log(err)
         }
 
         const { type } = event
