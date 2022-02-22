@@ -37,13 +37,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         try {
             event = stripe.webhooks.constructEvent(buf, secret, process.env.STRIPE_WEBHOOK_SECRET)
         } catch (err) {
-            console.log(err)
             return res.status(400).send(`Webhook error: ${err.message}`);
         }
 
         const { type } = event
 
-        if (!relevantEvents.has(type)) {
+        if (relevantEvents.has(type)) {
             try {
                 switch (type) {
                     case 'customer.subscription.updated':
@@ -71,6 +70,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
                         throw new Error('Unhandled envent.')
                 }
             } catch (err) {
+                console.log(err)
                 return res.json({ error: 'Webhook handler failed.' })
             }
         }
